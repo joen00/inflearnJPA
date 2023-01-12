@@ -1,7 +1,6 @@
 package com.ssafy.board.dto;
 
-import com.ssafy.board.entity.Board;
-import com.ssafy.board.entity.Member;
+import com.ssafy.board.entity.member.Member;
 import lombok.Data;
 
 import java.util.ArrayList;

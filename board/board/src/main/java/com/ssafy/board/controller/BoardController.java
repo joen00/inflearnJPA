@@ -1,9 +1,7 @@
 package com.ssafy.board.controller;
 
 import com.ssafy.board.dto.BoardDto;
-import com.ssafy.board.dto.MemberDto;
-import com.ssafy.board.entity.Board;
-import com.ssafy.board.entity.Member;
+import com.ssafy.board.entity.board.Board;
 import com.ssafy.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

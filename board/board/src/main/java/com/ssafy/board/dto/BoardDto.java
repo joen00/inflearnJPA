@@ -1,16 +1,10 @@
 package com.ssafy.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ssafy.board.entity.Board;
-import com.ssafy.board.entity.Member;
-import com.ssafy.board.repository.BoardRepository;
+import com.ssafy.board.entity.board.Board;
+import com.ssafy.board.entity.member.Member;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Data
