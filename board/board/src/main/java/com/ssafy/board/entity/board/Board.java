@@ -1,10 +1,8 @@
 package com.ssafy.board.entity.board;
 
+import com.ssafy.board.dto.board.BoardDto;
 import com.ssafy.board.entity.member.Member;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -34,6 +32,28 @@ public class Board {
 
     @LastModifiedDate
     private LocalDateTime updated_date;
+
+
+    @Builder
+    public Board(Member member, String board_title, String board_writer, String board_content, int board_count, LocalDateTime created_date, LocalDateTime updated_date) {
+        this.member = member;
+        this.board_title = board_title;
+        this.board_writer = board_writer;
+        this.board_content = board_content;
+        this.board_count = board_count;
+        this.created_date = created_date;
+        this.updated_date = updated_date;
+    }
+
+    public Board(Board o) {
+        this.member = o.member;
+        this.board_title = o.board_title;
+        this.board_writer = o.board_writer;
+        this.board_content = o.board_content;
+        this.board_count = o.board_count;
+        this.created_date = o.created_date;
+        this.updated_date = o.updated_date;
+    }
 
 
     public static Board createBoard(Member member, String board_title, String board_content) {

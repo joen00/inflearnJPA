@@ -1,8 +1,8 @@
-package com.ssafy.board.dto;
+package com.ssafy.board.dto.board;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ssafy.board.entity.board.Board;
 import com.ssafy.board.entity.member.Member;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -20,7 +20,8 @@ public class BoardDto {
     private LocalDateTime created_date;
     private LocalDateTime updated_date;
 
-    public BoardDto (Board board) {
+    @Builder
+    public BoardDto (BoardDto board) {
         this.board_id = board.getBoard_id();
         this.member = board.getMember();
         this.board_title = board.getBoard_title();
