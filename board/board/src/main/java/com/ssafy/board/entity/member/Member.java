@@ -20,16 +20,23 @@ public class Member{
     private String nickname;
     private String email;
 
-    @JsonIgnore // JSON으로 표현해줄때 제외한다
+    // @JsonIgnore // JSON으로 표현해줄때 제외한다
+    @JsonIgnore
     @OneToMany(mappedBy = "member") // 연관관계에서 누가 리더인지
     private List<Board> boardList = new ArrayList<>();
 
     @Builder
-    public Member(String nickname, String email, List<Board> boardList) {
+    public Member(int member_id, String nickname, String email, List<Board> boardList) {
+        this.member_id = member_id;
         this.nickname = nickname;
         this.email = email;
         this.boardList = boardList;
     }
 
+    public boolean updateMember(String nickname, String email){
+        this.nickname = nickname;
+        this.email = email;
+        return true;
+    }
 
 }

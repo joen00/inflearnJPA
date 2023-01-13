@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +18,11 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void save(MemberRequestDto memberRequestDto){
-        memberRepository.save(memberRequestDto.ToEntity());
+    public boolean save(MemberRequestDto memberRequestDto){
+        Member member = memberRepository.save(memberRequestDto.ToEntity());
+        if (member == null){
+            return false;
+        }else return true;
     }
 
     @Transactional
@@ -28,6 +32,7 @@ public class MemberService {
 
         for (Member member : all){
             MemberRequestDto memberDto = MemberRequestDto.builder()
+                    .member_id(member.getMember_id())
                     .nickname(member.getNickname())
                     .email(member.getEmail())
                     .boardList(member.getBoardList())
@@ -36,6 +41,18 @@ public class MemberService {
 
         }
         return memberDtoList;
+    }
+
+    @Transactional
+    public void deletePost(int id){
+        memberRepository.deleteById(id);
+    }
+
+    @Transactional
+    public boolean update(int id, MemberRequestDto dto){
+        Optional<Member> byId = memberRepository.findById(id);
+        Member member = byId.get();
+        return member.updateMember(dto.getNickname(), dto.getEmail());
     }
 
 }

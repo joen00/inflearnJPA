@@ -4,6 +4,9 @@ spring:
     url: jdbc:mysql://localhost:3306/jpa0111?serverTimezone=Asia/Seoul
     username: ssafy
     password: ssafy
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   jpa:
     hibernate:
