@@ -1,5 +1,6 @@
 package com.ssafy.board.entity.board;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.board.entity.TimeEntity;
 import com.ssafy.board.entity.member.Member;
 import lombok.*;
@@ -17,6 +18,7 @@ public class Board extends TimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int board_id;
+//    @JsonIgnore => member response안 받아옴
     @ManyToOne(fetch = FetchType.LAZY) // xtoOne으로 끝나면 fetch를 해준다.
     @JoinColumn(name = "member_id")
     private Member member;
@@ -35,8 +37,7 @@ public class Board extends TimeEntity {
         this.board_count = board_count;
     }
 
-
-    // 안쓸 수 있는 방향으로
+    // 안쓸 수 있는 방향으로 하고 싶은데 가능할까..? stream을 사용하기 때문..
     public Board(Board o) {
         this.member = o.member;
         this.board_id = o.board_id;
@@ -45,6 +46,14 @@ public class Board extends TimeEntity {
         this.board_content = o.board_content;
         this.board_count = o.board_count;
     }
+
+    public boolean updateBoard(String boardTitle, String boardContent) {
+        this.board_title = boardTitle;
+        this.board_content = boardContent;
+        return true;
+    }
+
+
 
 
 //    public static Board createBoard(Member member, String board_title, String board_content) {
@@ -61,9 +70,4 @@ public class Board extends TimeEntity {
 //        member.getBoardList().add(this); // member에 있는 boardlist에 넣어줌
 //    }
 
-    public boolean updateBoard(String boardTitle, String boardContent) {
-        this.board_title = boardTitle;
-        this.board_content = boardContent;
-        return true;
-    }
 }

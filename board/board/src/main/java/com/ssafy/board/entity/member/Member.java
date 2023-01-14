@@ -19,8 +19,8 @@ public class Member{
     private int member_id;
     private String nickname;
     private String email;
-
     // @JsonIgnore // JSON으로 표현해줄때 제외한다
+    // 만약에 안써주면 무한 로프가 돌면서 StackOverflowError: null 에러가 같이 난다.
     @JsonIgnore
     @OneToMany(mappedBy = "member") // 연관관계에서 누가 리더인지
     private List<Board> boardList = new ArrayList<>();

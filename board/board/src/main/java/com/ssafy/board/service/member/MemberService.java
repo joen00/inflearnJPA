@@ -1,6 +1,7 @@
 package com.ssafy.board.service.member;
 
 import com.ssafy.board.dto.member.MemberRequestDto;
+import com.ssafy.board.dto.member.MemberResponseDto;
 import com.ssafy.board.entity.member.Member;
 import com.ssafy.board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,20 +26,19 @@ public class MemberService {
         }else return true;
     }
 
-    @Transactional
-    public List<MemberRequestDto> getMemberList(){
+    @Transactional // responseDto같은디 ..?
+    public List<MemberResponseDto> getMemberList(){
         List<Member> all = memberRepository.findAll();
-        List<MemberRequestDto> memberDtoList = new ArrayList<>();
+        List<MemberResponseDto> memberDtoList = new ArrayList<>();
 
         for (Member member : all){
-            MemberRequestDto memberDto = MemberRequestDto.builder()
+            MemberResponseDto memberDto = MemberResponseDto.builder()
                     .member_id(member.getMember_id())
                     .nickname(member.getNickname())
                     .email(member.getEmail())
                     .boardList(member.getBoardList())
                     .build();
             memberDtoList.add(memberDto);
-
         }
         return memberDtoList;
     }

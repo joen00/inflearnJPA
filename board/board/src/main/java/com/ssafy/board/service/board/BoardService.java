@@ -3,6 +3,7 @@ package com.ssafy.board.service.board;
 import com.ssafy.board.dto.board.BoardRequestDto;
 import com.ssafy.board.dto.board.BoardResponseDto;
 import com.ssafy.board.entity.board.Board;
+import com.ssafy.board.entity.member.Member;
 import com.ssafy.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,13 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public void savePost (BoardRequestDto boardRequestDto){
+    public boolean savePost (BoardRequestDto boardRequestDto){
 //        Board board = boardRequestDto.ToEntity();
 //        System.out.println(board.getMember().getMember_id());
-        boardRepository.save(boardRequestDto.ToEntity());
+        Board board = boardRepository.save(boardRequestDto.ToEntity());
+        if (board == null){
+            return false;
+        }else return true;
     }
 
     @Transactional
@@ -38,6 +42,8 @@ public class BoardService {
                     .board_content(board.getBoard_content())
                     .board_count(board.getBoard_count())
                     .board_writer(board.getBoard_writer())
+                    .created_date(board.getCreated_date())
+                    .updated_date(board.getUpdated_date())
                     .build();
             boardDtoList.add(boardDto);
         }

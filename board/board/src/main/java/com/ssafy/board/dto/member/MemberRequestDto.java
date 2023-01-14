@@ -24,19 +24,14 @@ public class MemberRequestDto {
     private String nickname;
     @ApiParam(value = "이메일", required = true)
     private String email;
-    @ApiParam(value = "게시판 리스트", required = true)
-    private List<Board> boardList = new ArrayList<>();
 
     // 요청하는 것
     // Board 자체 사용함 -> 이게 맞나?
     @Builder
-    public MemberRequestDto(int member_id, String nickname, String email, List<Board> boardList) {
+    public MemberRequestDto(int member_id, String nickname, String email) {
         this.member_id = member_id;
         this.nickname = nickname;
         this.email = email;
-        this.boardList = boardList.stream()
-                .map(o -> new Board(o))
-                .collect(Collectors.toList());
     }
 
     public Member ToEntity(){
@@ -44,7 +39,6 @@ public class MemberRequestDto {
                 .member_id(member_id)
                 .nickname(nickname)
                 .email(email)
-                .boardList(boardList)
                 .build();
     }
 
