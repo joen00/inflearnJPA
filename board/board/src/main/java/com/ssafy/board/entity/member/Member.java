@@ -21,8 +21,8 @@ public class Member{
     private String email;
     // @JsonIgnore // JSON으로 표현해줄때 제외한다
     // 만약에 안써주면 무한 로프가 돌면서 StackOverflowError: null 에러가 같이 난다.
-    @JsonIgnore
-    @OneToMany(mappedBy = "member") // 연관관계에서 누가 리더인지
+    @JsonIgnore                     // 즉 여기에는 값을 넣을 수 없다.!!! 즉, 외래키가 있는 곳을 주인으로 해라 = 다 쪽이 주인(board)
+    @OneToMany(mappedBy = "member") // 연관관계에서 누가 리더인지 // 이것을 쓴 곳에서가 주인이라 따라서 여기는 그냥 조회만 가능하고 주인인 곳에서 수정할 수 있다.
     private List<Board> boardList = new ArrayList<>();
 
     @Builder

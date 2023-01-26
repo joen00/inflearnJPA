@@ -30,9 +30,10 @@ public class MemberResponseDto {
         this.member_id = member_id;
         this.nickname = nickname;
         this.email = email;
-        this.boardList = boardList.stream()
-                .map(o -> new Board(o))
-                .collect(Collectors.toList());
+        this.boardList = boardList;
+//        this.boardList = boardList.stream()
+//                .map(o -> new Board(o))
+//                .collect(Collectors.toList());
     }
 
 
