@@ -7,6 +7,7 @@ public class RoomRequest {
 
     private String title;
     private String content;
-    private String host;
+    private String hostId;
+    private String hostNickname;
 
 }

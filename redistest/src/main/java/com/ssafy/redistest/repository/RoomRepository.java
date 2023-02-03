@@ -1,10 +1,7 @@
 package com.ssafy.redistest.repository;
 
 
-import com.ssafy.redistest.dto.Room;
-import com.ssafy.redistest.dto.RoomRequest;
-import com.ssafy.redistest.dto.UserInfo;
-import com.ssafy.redistest.dto.UserListInfo;
+import com.ssafy.redistest.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,10 +9,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -51,23 +45,6 @@ public class RoomRepository {
         return hashOpsEnterInfo.values(ENTER_INFO);
     }
 
-    public UserListInfo findUserList(String roomId){
-        UserListInfo userListInfo = new UserListInfo();
-        List<UserInfo> userInfos = hashOpsEnterInfo.values(ENTER_INFO);
-        userListInfo.setRoomId(roomId);
-
-        List<String> userlist = new ArrayList<>();
-        for(UserInfo userInfo : userInfos){
-            if (userInfo.getRoomId().equals(roomId)){
-                userlist.add(userInfo.getUserId());
-                System.out.println("어떤 roomId" + userInfo.getRoomId());
-            }
-        }
-        System.out.println(userlist.toString());
-        userListInfo.setUserList(userlist);
-        return userListInfo;
-    }
-
     // 특정 채팅방 조회
     public Room findRoomById(String id) {
         return hashOpsChatRoom.get(TO_ROOMS, id);
@@ -75,29 +52,17 @@ public class RoomRepository {
 
     // 채방 생성 : 서버간 미팅방 공유를 위해 redis hash에 저장한다.
     public Room createChatRoom(RoomRequest dto) {
-        Room room = Room.create(dto.getTitle(), dto.getContent(), dto.getHost()); // dto에서 함수를 만듬 (update 같이)
-        System.out.println("repository : room" + room.getRoomId());
-
-        List<String> newList = new ArrayList<>();
-        newList.add(dto.getHost());
-        room.setUserList(newList);
-        long count = 1;
-        room.setUserCount(count);
+        Room room = Room.create(dto.getTitle(), dto.getContent(), dto.getHostId(), dto.getHostNickname()); // dto에서 함수를 만듬 (update 같이)
         hashOpsChatRoom.put(TO_ROOMS, room.getRoomId(), room );
+
         // 유저 넣어줌
         UserInfo userInfo = new UserInfo();
         userInfo.setRoomId(room.getRoomId());
-        userInfo.setUserId(dto.getHost());
-        hashOpsEnterInfo.put(ENTER_INFO, dto.getHost(), userInfo);
+        userInfo.setUserId(dto.getHostId());
+        userInfo.setNickname(dto.getHostNickname());
+        hashOpsEnterInfo.put(ENTER_INFO, dto.getHostId(), userInfo);
         return room ;
     }
-
-//    public UserInfo createUser(UserInfo userInfo) {
-//        UserInfo userInfo1 = UserInfo.create(userInfo.getRoomId(), userInfo.getUserId()); // dto에서 함수를 만듬 (update 같이)
-//        System.out.println("repository : room" + userInfo1.getRoomId());
-//        hashOpsUser.put(, userInfo1.getRoomId(), userInfo1 );
-//        return userInfo1 ;
-//    }
 
     // 방 삭제 : redis hash에 저장된 미팅방 파괴
     public void deleteRoom(String roomId) {
@@ -120,8 +85,11 @@ public class RoomRepository {
         
         // 유저 userlist에 등록하기
         Room room1 = hashOpsChatRoom.get(TO_ROOMS, userInfo.getRoomId());
-        List<String> newList = room1.getUserList();
-        newList.add(userInfo.getUserId());
+        System.out.println(room1.getUserList().toString() + " ----------------- ");
+        List<UserResponse> newList = room1.getUserList();
+        UserResponse userResponse = new UserResponse(userInfo.getUserId(), userInfo.getNickname());
+
+        newList.add(userResponse);
         room1.setUserList(newList);
         room1.setUserCount(room1.getUserList().size());
         hashOpsChatRoom.put(TO_ROOMS, room1.getRoomId(), room1 );
@@ -136,58 +104,41 @@ public class RoomRepository {
     public void removeUserEnterInfo(String sessionId, UserInfo userInfo) {
 
         Room room1 = hashOpsChatRoom.get(TO_ROOMS, userInfo.getRoomId());
-
-        System.out.println(sessionId + " : " + room1.getHost());
-        if (sessionId.equals(room1.getHost())){
+        if (sessionId.equals(room1.getHostId())){
             this.deleteRoom(room1.getRoomId());
             return;
         }
-
         hashOpsEnterInfo.delete(ENTER_INFO, sessionId);
 
         // 유저 list에 저장
+        List<UserResponse> newList = room1.getUserList();
+        UserResponse userResponse = new UserResponse(userInfo.getUserId(), userInfo.getNickname());
+        newList.remove(userResponse);
 
-
-        List<String> newList = room1.getUserList();
-        newList.remove(userInfo.getUserId());
         room1.setUserList(newList);
         room1.setUserCount(room1.getUserList().size());
         hashOpsChatRoom.put(TO_ROOMS, room1.getRoomId(), room1 );
     }
 
-    // 미팅방 유저수 조회
-    public long getUserCount(String roomId) {
-        return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
-    }
 
-    // 미팅방에 입장한 유저수 +1 증가
-//    public long plusUserCount(String roomId) {
-//        return Optional.ofNullable(valueOps.increment(USER_COUNT + "_" + roomId)).orElse(0L);
+
+
+    ////////////////////
+//    public long plusUserCount(String roomId, Room room) {
+//        long count = room.getUserCount() + 1;
+//        room.setUserCount(count);
+//        hashOpsChatRoom.put(TO_ROOMS, roomId, room );
+//
+//        return count;
 //    }
-
-    public long plusUserCount(String roomId, Room room) {
-//        System.out.println(roomId + " : " + room.getRoomId());
-        long count = room.getUserCount() + 1;
-        room.setUserCount(count);
-        hashOpsChatRoom.put(TO_ROOMS, roomId, room );
-
-        return count;
-    }
-
-    // 미팅방에 입장한 유저수 -1
-//    public long minusUserCount(String roomId) {
-//        return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
+//
+//    public long minusUserCount(String roomId, Room room) {
+//        long count = room.getUserCount() - 1;
+//        room.setUserCount(count);
+//        hashOpsChatRoom.put(TO_ROOMS, roomId, room );
+//
+//        return count;
 //    }
-
-    public long minusUserCount(String roomId, Room room) {
-//        System.out.println(roomId + " : " + room.getRoomId());
-        long count = room.getUserCount() - 1;
-        room.setUserCount(count);
-        // System.out.println(count);
-        hashOpsChatRoom.put(TO_ROOMS, roomId, room );
-
-        return count;
-    }
 
 
 }

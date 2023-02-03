@@ -21,41 +21,34 @@ public class RoomController {
 
     private final RoomRepository roomRepository;
 
-    @GetMapping("/room")
+    @GetMapping("/room") // 방 목록전체
     public ResponseEntity room() {
         List<Room> chatRooms = roomRepository.findAllRoom();
-        // chatRooms.stream().forEach(room -> room.setUserCount(roomRepository.getUserCount(room.getRoomId()))); // 이거 안됨 = getUserCount
         return ResponseEntity.ok().body(chatRooms);
     }
 
-    @PostMapping("/room")
+    @PostMapping("/room") // 방 생성
     public Room createRoom(@RequestBody RoomRequest dto) {
-        //System.out.println("여기" + dto.getContent());
         return roomRepository.createChatRoom(dto);
     }
 
-    // 채팅방 파괴
+    // 방 파괴
     @DeleteMapping("/room/{roomId}") // 방이 삭제 되면 자동으로 유저들도 삭제 되는거 확인함
     public ResponseEntity deleteRoom(@PathVariable String roomId) {
         roomRepository.deleteRoom(roomId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
-    @GetMapping("/room/user")
-    public ResponseEntity findAllUser() {
-        List<UserInfo> userInfos = roomRepository.findAllUser(); // 방과 유저 정보 반환 -> 방이 삭제 되면 자동으로 유저들도 삭제 되는거 확인함
-        return ResponseEntity.ok().body(userInfos); 
-    }
-
-    @GetMapping("/room/userlist/{roomId}")
-    public ResponseEntity roomUserList(@PathVariable String roomId) {
-        UserListInfo userListInfo = roomRepository.findUserList(roomId);
 
 
-        return ResponseEntity.ok().body(userListInfo);
-    }
+    // 방 상세 조회
+//    @GetMapping("/room/{roomId}") // 방이 삭제 되면 자동으로 유저들도 삭제 되는거 확인함
+//    public Room selectOne(@PathVariable String roomId) {
+//        roomRepository.deleteRoom(roomId);
+//        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+//    }
 
-    // 방 입장
+    // 방에 유저 입장
     @PostMapping("/room/enter")
     public ResponseEntity enterRoom(@RequestBody UserInfo userInfo){ // 방 들어갈때 유저 count 됨
         roomRepository.setUserEnterInfo(userInfo.getUserId(), userInfo);
@@ -81,5 +74,11 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
+        @GetMapping("/room/user")
+    public ResponseEntity findAllUser() {
+        List<UserInfo> userInfos = roomRepository.findAllUser(); // 방과 유저 정보 반환 -> 방이 삭제 되면 자동으로 유저들도 삭제 되는거 확인함
+        return ResponseEntity.ok().body(userInfos);
+    }
+//
 
 }

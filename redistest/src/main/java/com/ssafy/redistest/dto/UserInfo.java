@@ -17,23 +17,13 @@ public class UserInfo implements Serializable {
 
     private String roomId; // 방번호
     private String userId; // 유저 번호
+    private String nickname;
 
-
-
-//    public UserInfo(String roomId, String userId) {
-//        this.roomId = roomId;
-//        this.userId = userId;
-//    }
-
-//    public UserInfo() {
-//
-//    }
-
-
-    public static UserInfo create(String roomId, String userId) {
+    public static UserInfo create(String roomId, String userId, String nickname) {
         UserInfo userInfo = new UserInfo();
         userInfo.roomId = roomId;
         userInfo.userId = userId;
+        userInfo.nickname = nickname;
         return userInfo;
     }
 
