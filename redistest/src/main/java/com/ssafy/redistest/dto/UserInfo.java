@@ -19,6 +19,7 @@ public class UserInfo implements Serializable {
     private String userId; // 유저 번호
 
 
+
 //    public UserInfo(String roomId, String userId) {
 //        this.roomId = roomId;
 //        this.userId = userId;

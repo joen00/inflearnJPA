@@ -4,6 +4,7 @@ package com.ssafy.redistest.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -21,6 +22,9 @@ public class Room implements Serializable {
     private String content;
     private String host;
     private long userCount;
+
+    private List<String> userList;
+
 
     public static Room create(String title, String content, String host) {
         Room room = new Room();

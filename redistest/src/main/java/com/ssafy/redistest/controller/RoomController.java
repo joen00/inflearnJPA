@@ -4,6 +4,7 @@ package com.ssafy.redistest.controller;
 import com.ssafy.redistest.dto.Room;
 import com.ssafy.redistest.dto.RoomRequest;
 import com.ssafy.redistest.dto.UserInfo;
+import com.ssafy.redistest.dto.UserListInfo;
 import com.ssafy.redistest.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,14 +47,22 @@ public class RoomController {
         return ResponseEntity.ok().body(userInfos); 
     }
 
+    @GetMapping("/room/userlist/{roomId}")
+    public ResponseEntity roomUserList(@PathVariable String roomId) {
+        UserListInfo userListInfo = roomRepository.findUserList(roomId);
+
+
+        return ResponseEntity.ok().body(userListInfo);
+    }
+
     // 방 입장
     @PostMapping("/room/enter")
     public ResponseEntity enterRoom(@RequestBody UserInfo userInfo){ // 방 들어갈때 유저 count 됨
         roomRepository.setUserEnterInfo(userInfo.getUserId(), userInfo);
         // roomRepository.plusUserCount(userInfo.getRoomId()); // 이게 안됨
-        Room room = roomRepository.findRoomById(userInfo.getRoomId());
+        // Room room = roomRepository.findRoomById(userInfo.getRoomId());
         // System.out.println(room.getRoomId());
-        roomRepository.plusUserCount(userInfo.getRoomId(), room);
+        // roomRepository.plusUserCount(userInfo.getRoomId(), room);
 //        System.out.println(roomRepository.getUserCount(userInfo.getRoomId()));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -62,11 +71,11 @@ public class RoomController {
     // 방 나감
     @PostMapping("/room/out")
     public ResponseEntity outRoom(@RequestBody UserInfo userInfo){ // 방 나갈때 유저 count 됨
-        roomRepository.removeUserEnterInfo(userInfo.getUserId());
+        roomRepository.removeUserEnterInfo(userInfo.getUserId(), userInfo);
         // roomRepository.plusUserCount(userInfo.getRoomId()); // 이게 안됨
-        Room room = roomRepository.findRoomById(userInfo.getRoomId());
+        // Room room = roomRepository.findRoomById(userInfo.getRoomId());
         // System.out.println(room.getRoomId());
-        roomRepository.minusUserCount(userInfo.getRoomId(), room);
+        // roomRepository.minusUserCount(userInfo.getRoomId(), room);
 //        System.out.println(roomRepository.getUserCount(userInfo.getRoomId())); // 이거 0으로 나옴
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
